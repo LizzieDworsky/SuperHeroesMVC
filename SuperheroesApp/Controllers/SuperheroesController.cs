@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SuperheroesApp.Data;
 using SuperheroesApp.Models;
+using System.Net;
 
 namespace SuperheroesApp.Controllers
 {
@@ -23,14 +24,13 @@ namespace SuperheroesApp.Controllers
         }
 
         // GET: SuperheroesController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var superhero = _context.Superheroes.Where(s => s.Id == id);
-            var superhero2 = _context.Superheroes.FindAsync(id); // another option
+            var superhero = _context.Superheroes.SingleOrDefault(s => s.Id == id);
             if (superhero == null)
             {
                 return NotFound();
