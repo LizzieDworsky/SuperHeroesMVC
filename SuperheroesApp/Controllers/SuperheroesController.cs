@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SuperheroesApp.Data;
 using SuperheroesApp.Models;
 
@@ -24,7 +25,16 @@ namespace SuperheroesApp.Controllers
         // GET: SuperheroesController/Details/5
         public ActionResult Details(int id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
             var superhero = _context.Superheroes.Where(s => s.Id == id);
+            var superhero2 = _context.Superheroes.FindAsync(id); // another option
+            if (superhero == null)
+            {
+                return NotFound();
+            }
             return View(superhero);
         }
 
@@ -37,15 +47,17 @@ namespace SuperheroesApp.Controllers
         // POST: SuperheroesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Superhero newSuperhero)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                _context.Add(newSuperhero);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
-            catch
+            else
             {
-                return View();
+                return View(newSuperhero);
             }
         }
 
