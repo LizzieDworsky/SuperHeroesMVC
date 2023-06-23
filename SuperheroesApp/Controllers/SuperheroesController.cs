@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SuperheroesApp.Models;
 
 namespace SuperheroesApp.Controllers
 {
@@ -8,7 +9,8 @@ namespace SuperheroesApp.Controllers
         // GET: SuperheroesController
         public ActionResult Index()
         {
-            return View();
+            var Superheroes = new List<Superhero>();
+            return View(Superheroes);
         }
 
         // GET: SuperheroesController/Details/5
