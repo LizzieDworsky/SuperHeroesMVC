@@ -1,16 +1,24 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SuperheroesApp.Data;
 using SuperheroesApp.Models;
 
 namespace SuperheroesApp.Controllers
 {
     public class SuperheroesController : Controller
     {
+        private ApplicationDbContext _context;
+
+        public SuperheroesController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         // GET: SuperheroesController
         public ActionResult Index()
         {
-            var Superheroes = new List<Superhero>();
-            return View(Superheroes);
+            var superheroes = _context.Superheroes.ToList();
+            return View(superheroes);
         }
 
         // GET: SuperheroesController/Details/5
