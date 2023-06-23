@@ -62,24 +62,50 @@ namespace SuperheroesApp.Controllers
         }
 
         // GET: SuperheroesController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var superhero = _context.Superheroes.SingleOrDefault(s => s.Id == id);
+            if (superhero == null)
+            {
+                return NotFound();
+            }
+            return View(superhero);
         }
 
         // POST: SuperheroesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int? id, Superhero updateSuperhero)
         {
-            try
+            if (id != updateSuperhero.Id)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+
+            var superheroToUpdate = _context.Superheroes.SingleOrDefault(s => s.Id == id);
+
+            if (superheroToUpdate == null)
             {
-                return View();
+                return NotFound();
             }
+
+            if (ModelState.IsValid)
+            {
+                //_context.Update(updateSuperhero); // one route that updates the entire entity in db
+                superheroToUpdate.Name = updateSuperhero.Name;
+                superheroToUpdate.AlterEgo = updateSuperhero.AlterEgo;
+                superheroToUpdate.PrimaryAbility = updateSuperhero.PrimaryAbility;
+                superheroToUpdate.SecondaryAbility = updateSuperhero.SecondaryAbility;
+                superheroToUpdate.Catchphrase = updateSuperhero.Catchphrase;
+                _context.Update(superheroToUpdate); // another route that only updates the changed fields
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(updateSuperhero);
         }
 
         // GET: SuperheroesController/Delete/5
