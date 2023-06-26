@@ -109,24 +109,37 @@ namespace SuperheroesApp.Controllers
         }
 
         // GET: SuperheroesController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var superhero = _context.Superheroes.SingleOrDefault(s => s.Id == id);
+            if (superhero == null)
+            {
+                return NotFound();
+            }
+            return View(superhero);
         }
 
         // POST: SuperheroesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Superhero deleteSuperhero)
         {
-            try
+            if (id != deleteSuperhero.Id)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+            var superheroToDelete = _context.Superheroes.SingleOrDefault(s => s.Id == id);
+            if (superheroToDelete == null)
             {
-                return View();
+                return NotFound();
             }
+            _context.Superheroes.Remove(superheroToDelete);
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
